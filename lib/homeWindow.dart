@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'Authentication.dart';
+import 'package:provider/provider.dart';
+import 'views/homeView.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+  final List<Widget> pages = [TestSite(), TestSite()];
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          title: Text('My Fit app'),
+          backgroundColor: Color(0xFF243B55),
+          actions: <Widget>[
+            Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: GestureDetector(
+                    onTap: () {
+                      context.read<AuthenticationService>().signOut();
+                    },
+                    child: new Container(
+                        width: 50,
+                        decoration: new BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.cancel,
+                          size: 46.0,
+                        )))),
+          ]),
+      body: pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: onTabTapped,
+        currentIndex: _currentIndex,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Color(0xFF141E30),
+        items: [
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Main Page',
+          ),
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Your exercises',
+          ),
+        ],
+      ),
+    );
+  }
+}
