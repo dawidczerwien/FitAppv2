@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'Authentication.dart';
 import 'package:provider/provider.dart';
 import 'views/homeView.dart';
+import 'views/workoutListView.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  final List<Widget> pages = [TestSite(), TestSite()];
+  final List<Widget> pages = [TestSite(), WorkoutListPage()];
   @override
   void initState() {
     super.initState();
