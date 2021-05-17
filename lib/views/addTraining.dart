@@ -3,6 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'exerciseView.dart';
+
 class AddTrainingPage extends StatefulWidget {
   @override
   _AddTrainingPageState createState() => _AddTrainingPageState();
@@ -67,7 +69,7 @@ class _AddTrainingPageState extends State<AddTrainingPage> {
                           padding:
                               const EdgeInsets.only(left: 150.0, top: 40.0),
                           child: new ElevatedButton(
-                            child: const Text('Next Step'),
+                            child: const Text('Add Trainig'),
                             onPressed: () {
                               if (_formKey.currentState.validate()) {
                                 final firebaseUser =
@@ -84,7 +86,10 @@ class _AddTrainingPageState extends State<AddTrainingPage> {
                                   'name': myController.text,
                                   'time': currentDate.toString().split(' ')[0]
                                 });
-                                print(inserted.key);
+                                //print(inserted.key);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        AddExercisePage(inserted.key)));
                               }
                             },
                           )),
