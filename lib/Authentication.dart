@@ -13,6 +13,10 @@ class AuthenticationService {
     return email;
   }
 
+  String getUserName() {
+    return auth.currentUser.email.split('@')[0];
+  }
+
   Stream<User> get authStateChanges => _firebaseAuth.idTokenChanges();
 
   Future<void> signOut() async {

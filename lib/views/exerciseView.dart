@@ -182,12 +182,12 @@ class _AddExercisePageState extends State<AddExercisePage> {
                       Animation<double> animation, int index) {
                     print(snapshot.value);
                     if (snapshot.value.runtimeType != String) {
-                      print('t: ');
-                      print(snapshot.value.runtimeType);
+                      //print('t: ');
+                      //print(snapshot.value.runtimeType);
                       Map notes = snapshot.value;
 
-                      print(notes['type'] + "  " + notes['id']);
-                      print(snapshot.key);
+                      //print(notes['type'] + "  " + notes['id']);
+                      //print(snapshot.key);
                       return _buildContactItem(notes: notes, key: snapshot.key);
                     } else {
                       return null;

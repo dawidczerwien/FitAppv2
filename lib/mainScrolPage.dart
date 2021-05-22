@@ -11,7 +11,7 @@ class _ScrollMainpageState extends State<ScrollMainpage> {
   PageController _controller =
       new PageController(initialPage: 1, viewportFraction: 1.0);
 
-  Widget LoginMainPage() {
+  Widget loginMainPage() {
     return Container(
       decoration: BoxDecoration(
           color: Colors.redAccent,
@@ -92,7 +92,7 @@ class _ScrollMainpageState extends State<ScrollMainpage> {
       child: PageView(
         controller: _controller,
         physics: new AlwaysScrollableScrollPhysics(),
-        children: <Widget>[LoginPage(), LoginMainPage(), RegisterPage()],
+        children: <Widget>[LoginPage(), loginMainPage(), RegisterPage()],
         scrollDirection: Axis.horizontal,
       ),
     ));

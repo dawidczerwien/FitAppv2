@@ -25,12 +25,19 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
         .child(widget.type);
   }
 
-  Widget _buildContactItem({Map notes, var key}) {
+  Widget _buildContactItem({Map notes, var key, int likes, Map usersLiked}) {
+    final firebaseUser = Provider.of<User>(context, listen: false);
     return SafeArea(
         child: Container(
             decoration: new BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
               color: Colors.red,
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 20.0,
+                    offset: Offset(10, 20))
+              ],
             ),
             padding: EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 10),
             margin: EdgeInsets.only(top: 20, left: 20, right: 20),
@@ -42,8 +49,8 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
                   notes['name'],
                   style: TextStyle(fontSize: 22, color: Colors.white),
                 ),
-                Center(
-                  child: IconButton(
+                Row(children: [
+                  IconButton(
                       onPressed: () {
                         final firebaseUser =
                             Provider.of<User>(context, listen: false);
@@ -61,7 +68,44 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
                         //print(widget.trainigKey);
                       },
                       icon: Icon(Icons.my_library_add_outlined)),
-                ),
+                  IconButton(
+                      onPressed: () {
+                        final firebaseUser =
+                            Provider.of<User>(context, listen: false);
+                        if (!usersLiked.containsValue(firebaseUser.uid)) {
+                          FirebaseDatabase.instance
+                              .reference()
+                              .child('exercises')
+                              .child(widget.type)
+                              .child(key)
+                              .child('usersLiked')
+                              .push()
+                              .set(firebaseUser.uid);
+                        } else {
+                          usersLiked.forEach((id, value) {
+                            //print(key);
+                            if (value == firebaseUser.uid) {
+                              print(key);
+                              FirebaseDatabase.instance
+                                  .reference()
+                                  .child('exercises')
+                                  .child(widget.type)
+                                  .child(key)
+                                  .child('usersLiked')
+                                  .child(id)
+                                  .remove();
+                            }
+                          });
+                        }
+                      },
+                      icon: Icon(
+                        Icons.thumb_up,
+                        color: usersLiked.containsValue(firebaseUser.uid)
+                            ? Colors.green
+                            : Colors.black,
+                      )),
+                  Text(likes.toString())
+                ]),
               ],
             )));
   }
@@ -74,7 +118,28 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
             itemBuilder: (BuildContext context, DataSnapshot snapshot,
                 Animation<double> animation, int index) {
               Map notes = snapshot.value;
-              return _buildContactItem(notes: notes, key: snapshot.key);
+              Map usersDict = notes['usersLiked'];
+              int numberOflikes = 0;
+
+              print('numberofLikes');
+              try {
+                numberOflikes = usersDict.keys.length;
+              } catch (ex) {
+                print(ex);
+              }
+
+              print(numberOflikes);
+
+              if (usersDict == null) {
+                usersDict = {null: 'null'};
+              }
+              print('test');
+              print(notes['usersLiked']);
+              return _buildContactItem(
+                  notes: notes,
+                  key: snapshot.key,
+                  likes: numberOflikes,
+                  usersLiked: usersDict);
             }));
   }
 }
