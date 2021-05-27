@@ -4,6 +4,8 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'createExercise.dart';
+
 class AddExcercisePage extends StatefulWidget {
   final type;
   final trainigKey;
@@ -22,7 +24,8 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
     _ref = FirebaseDatabase.instance
         .reference()
         .child('exercises')
-        .child(widget.type);
+        .child(widget.type)
+        .orderByChild('likes');
   }
 
   Widget _buildContactItem({Map notes, var key, int likes, Map usersLiked}) {
@@ -49,6 +52,12 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
                   notes['name'],
                   style: TextStyle(fontSize: 22, color: Colors.white),
                 ),
+                notes['image'] != null
+                    ? Image.network(notes['image'])
+                    : Text(''),
+                Text(notes['description'] != null
+                    ? notes['description']
+                    : 'Description'),
                 Row(children: [
                   IconButton(
                       onPressed: () {
@@ -80,7 +89,15 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
                               .child(key)
                               .child('usersLiked')
                               .push()
-                              .set(firebaseUser.uid);
+                              .set(firebaseUser.uid)
+                              .then((value) {
+                            FirebaseDatabase.instance
+                                .reference()
+                                .child('exercises')
+                                .child(widget.type)
+                                .child(key)
+                                .update({"likes": notes['likes'] - 1});
+                          });
                         } else {
                           usersLiked.forEach((id, value) {
                             //print(key);
@@ -93,7 +110,15 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
                                   .child(key)
                                   .child('usersLiked')
                                   .child(id)
-                                  .remove();
+                                  .remove()
+                                  .then((value) {
+                                FirebaseDatabase.instance
+                                    .reference()
+                                    .child('exercises')
+                                    .child(widget.type)
+                                    .child(key)
+                                    .update({"likes": notes['likes'] + 1});
+                              });
                             }
                           });
                         }
@@ -113,33 +138,50 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FirebaseAnimatedList(
-            query: _ref,
-            itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                Animation<double> animation, int index) {
-              Map notes = snapshot.value;
-              Map usersDict = notes['usersLiked'];
-              int numberOflikes = 0;
+        body: SafeArea(
+            child: Column(children: <Widget>[
+      ElevatedButton(
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(35.0),
+                    side: BorderSide(color: Colors.white)))),
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => CreateExercisePage(widget.type)));
+        },
+        child: Text('Create Chest exercise'),
+      ),
+      Expanded(
+          child: FirebaseAnimatedList(
+              query: _ref,
+              itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                  Animation<double> animation, int index) {
+                Map notes = snapshot.value;
+                Map usersDict = notes['usersLiked'];
+                int numberOflikes = 0;
 
-              print('numberofLikes');
-              try {
-                numberOflikes = usersDict.keys.length;
-              } catch (ex) {
-                print(ex);
-              }
+                print('numberofLikes');
+                try {
+                  numberOflikes = usersDict.keys.length;
+                } catch (ex) {
+                  print(ex);
+                }
 
-              print(numberOflikes);
+                print(numberOflikes);
 
-              if (usersDict == null) {
-                usersDict = {null: 'null'};
-              }
-              print('test');
-              print(notes['usersLiked']);
-              return _buildContactItem(
+                if (usersDict == null) {
+                  usersDict = {null: 'null'};
+                }
+                print('test');
+                print(notes['usersLiked']);
+                return _buildContactItem(
                   notes: notes,
                   key: snapshot.key,
                   likes: numberOflikes,
-                  usersLiked: usersDict);
-            }));
+                  usersLiked: usersDict,
+                );
+              }))
+    ])));
   }
 }
