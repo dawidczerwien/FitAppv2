@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'views/homeView.dart';
+import 'views/messagesPage.dart';
 import 'views/workoutListView.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,7 +10,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  final List<Widget> pages = [TestSite(), WorkoutListPage()];
+  final List<Widget> pages = [
+    TestSite(),
+    WorkoutListPage(),
+    MessagesPage(),
+  ];
   @override
   void initState() {
     super.initState();
@@ -28,8 +33,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped,
         currentIndex: _currentIndex,
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.white,
         backgroundColor: Colors.red,
         items: [
           new BottomNavigationBarItem(
@@ -38,7 +43,11 @@ class _HomePageState extends State<HomePage> {
           ),
           new BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
-            label: 'Your exercises',
+            label: 'Trainings',
+          ),
+          new BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Your messages',
           ),
         ],
       ),
