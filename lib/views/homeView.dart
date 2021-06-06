@@ -3,7 +3,7 @@ import '../Authentication.dart';
 import 'formView.dart';
 import 'package:provider/provider.dart';
 
-class TestSite extends StatelessWidget {
+class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +22,7 @@ class TestSite extends StatelessWidget {
                 padding: EdgeInsets.only(right: 20.0),
                 child: GestureDetector(
                     onTap: () {
-                      //context.read<AuthenticationService>().signOut();
-                      print(
-                          context.read<AuthenticationService>().getUserName());
+                      context.read<AuthenticationService>().signOut();
                     },
                     child: new Container(
                         width: 50,
