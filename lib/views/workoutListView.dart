@@ -25,12 +25,12 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
         .child(firebaseUser.uid);
   }
 
-  Widget _buildContactItem({Map notes, var key}) {
+  Widget _buildContactItem({Map trainings, var key}) {
     return new GestureDetector(
         onTap: () {
-          print(notes['name']);
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => AddExercisePage(key)));
+          print(trainings['name']);
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => ExercisePage(key)));
         },
         child: Container(
             decoration: new BoxDecoration(
@@ -48,13 +48,13 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(notes['name'] ?? 'default',
+                Text(trainings['name'] ?? 'default',
                     style: TextStyle(
                       fontSize: 22,
                       color: Colors.black,
                     )),
                 Text(
-                  notes['time'],
+                  trainings['time'],
                   style: TextStyle(fontSize: 15, color: Colors.black),
                 ),
               ],
@@ -114,9 +114,9 @@ class _WorkoutListPageState extends State<WorkoutListPage> {
                           Animation<double> animation, int index) {
                         print(snapshot.key);
                         if (snapshot.value.runtimeType != String) {
-                          Map notes = snapshot.value;
+                          Map trainings = snapshot.value;
                           return _buildContactItem(
-                              notes: notes, key: snapshot.key);
+                              trainings: trainings, key: snapshot.key);
                         } else {
                           return null;
                         }

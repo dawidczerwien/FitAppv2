@@ -47,8 +47,6 @@ class _MessagesPageState extends State<MessagesPage> {
                       Provider.of<User>(context, listen: false);
                   print(firebaseUser.uid + '_' + userId);
 
-                  final ref = referenceDatabase.reference();
-
                   var db2 = FirebaseDatabase.instance
                       .reference()
                       .child('messages')

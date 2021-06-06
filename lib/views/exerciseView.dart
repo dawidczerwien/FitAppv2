@@ -6,16 +6,16 @@ import 'package:provider/provider.dart';
 
 import 'addExercise.dart';
 
-class AddExercisePage extends StatefulWidget {
+class ExercisePage extends StatefulWidget {
   final trainingKey;
 
-  AddExercisePage(this.trainingKey);
+  ExercisePage(this.trainingKey);
 
   @override
-  _AddExercisePageState createState() => _AddExercisePageState();
+  _ExercisePage createState() => _ExercisePage();
 }
 
-class _AddExercisePageState extends State<AddExercisePage> {
+class _ExercisePage extends State<ExercisePage> {
   Query _ref;
 
   void initState() {
@@ -63,7 +63,7 @@ class _AddExercisePageState extends State<AddExercisePage> {
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            AddExcercisePage('chest', widget.trainingKey)));
+                            AddExercisePage('chest', widget.trainingKey)));
                   },
                   child: CircleAvatar(
                       radius: 35,
@@ -93,7 +93,7 @@ class _AddExercisePageState extends State<AddExercisePage> {
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            AddExcercisePage('biceps', widget.trainingKey)));
+                            AddExercisePage('biceps', widget.trainingKey)));
                   },
                   child: CircleAvatar(
                       radius: 35,

@@ -6,16 +6,16 @@ import 'package:provider/provider.dart';
 
 import 'createExercise.dart';
 
-class AddExcercisePage extends StatefulWidget {
+class AddExercisePage extends StatefulWidget {
   final type;
   final trainigKey;
-  AddExcercisePage(this.type, this.trainigKey);
+  AddExercisePage(this.type, this.trainigKey);
 
   @override
-  _AddExcercisePageState createState() => _AddExcercisePageState();
+  _AddExercisePageState createState() => _AddExercisePageState();
 }
 
-class _AddExcercisePageState extends State<AddExcercisePage> {
+class _AddExercisePageState extends State<AddExercisePage> {
   final myController = TextEditingController();
   Query _ref;
 

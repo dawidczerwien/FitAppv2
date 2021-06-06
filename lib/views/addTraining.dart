@@ -89,7 +89,7 @@ class _AddTrainingPageState extends State<AddTrainingPage> {
                                 //print(inserted.key);
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        AddExercisePage(inserted.key)));
+                                        ExercisePage(inserted.key)));
                               }
                             },
                           )),
