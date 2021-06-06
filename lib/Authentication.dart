@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth;
 
   AuthenticationService(this._firebaseAuth);
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final referenceDatabase = FirebaseDatabase.instance;
 
   String inputData() {
     final User user = auth.currentUser;
@@ -37,6 +39,13 @@ class AuthenticationService {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
+      final ref = referenceDatabase.reference();
+
+      ref
+          .child('users')
+          .child(auth.currentUser.uid)
+          .set({'email': email, 'userId': auth.currentUser.uid});
+
       return "Signed up";
     } on FirebaseAuthException catch (e) {
       return e.message;

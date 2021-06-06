@@ -150,7 +150,7 @@ class _AddExcercisePageState extends State<AddExcercisePage> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => CreateExercisePage(widget.type)));
         },
-        child: Text('Create Chest exercise'),
+        child: Text('Create exercise'),
       ),
       Expanded(
           child: FirebaseAnimatedList(

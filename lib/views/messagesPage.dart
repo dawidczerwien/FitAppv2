@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Authentication.dart';
-import 'addTraining.dart';
+import 'chatPage.dart';
 
 class MessagesPage extends StatefulWidget {
   @override
@@ -9,13 +11,128 @@ class MessagesPage extends StatefulWidget {
 }
 
 class _MessagesPageState extends State<MessagesPage> {
+  final referenceDatabase = FirebaseDatabase.instance;
   final myController = TextEditingController();
-
+  DataSnapshot searchResultSnapshot;
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     myController.dispose();
     super.dispose();
+  }
+
+  Widget userTile(String userEmail, String userId) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                userEmail,
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              )
+            ],
+          ),
+          Spacer(),
+          GestureDetector(
+            onTap: () {
+              //sendMessage(userName);
+            },
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(24)),
+                child: GestureDetector(
+                  onTap: () {
+                    final firebaseUser =
+                        Provider.of<User>(context, listen: false);
+                    print(firebaseUser.uid + '_' + userId);
+                    final ref = referenceDatabase.reference();
+
+                    var db2 = FirebaseDatabase.instance
+                        .reference()
+                        .child('messages')
+                        .child(firebaseUser.uid + '_' + userId);
+                    db2.once().then((DataSnapshot snapshot) {
+                      print(snapshot.key);
+                      if (snapshot.value == null) {
+                        var db3 = FirebaseDatabase.instance
+                            .reference()
+                            .child('messages')
+                            .child(userId + '_' + firebaseUser.uid);
+                        db3.once().then((DataSnapshot snapshot) {
+                          print(snapshot.key);
+                          if (snapshot.value == null) {
+                            ref
+                                .child('messages')
+                                .child(firebaseUser.uid + '_' + userId)
+                                .push()
+                                .set({'messages': 0});
+                          } else {
+                            print("exists");
+                          }
+                        });
+                      } else {
+                        print("exists");
+                      }
+                    });
+
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => ChatPage()));
+                  },
+                  child: Text(
+                    "Message",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                )),
+          )
+        ],
+      ),
+    );
+  }
+
+  bool haveUserSearched = false;
+  bool isLoading = false;
+  List<dynamic> myList = [];
+  List<dynamic> myListId = [];
+
+  initiateSearch() async {
+    if (myController.text.isNotEmpty) {
+      setState(() {
+        myList = [];
+      });
+      var db = FirebaseDatabase.instance.reference().child('users');
+      db.once().then((DataSnapshot snapshot) {
+        Map<dynamic, dynamic> values = snapshot.value;
+
+        values.forEach((key, values) {
+          if (values['email'].toString().contains(myController.text)) {
+            myList.add(values["email"]);
+            myListId.add(values['userId']);
+          }
+          //print(values['email']);
+        });
+
+        print(myList);
+        setState(() {
+          haveUserSearched = true;
+        });
+      });
+    }
+  }
+
+  Widget userList() {
+    return haveUserSearched
+        ? ListView.builder(
+            shrinkWrap: true,
+            itemCount: myList.length,
+            itemBuilder: (context, index) {
+              return userTile(myList[index], myListId[index]);
+            })
+        : Container();
   }
 
   @override
@@ -49,7 +166,8 @@ class _MessagesPageState extends State<MessagesPage> {
                                 size: 46.0,
                               )))),
                 ]),
-            body: Column(children: [
+            body: SingleChildScrollView(
+                child: Column(children: [
               TextField(
                 controller: myController,
                 decoration: InputDecoration(
@@ -68,12 +186,12 @@ class _MessagesPageState extends State<MessagesPage> {
                               borderRadius: BorderRadius.circular(35.0),
                               side: BorderSide(color: Colors.white)))),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => AddTrainingPage()));
+                    initiateSearch();
                   },
                   child: Text('Find user'),
                 ),
               ),
-            ])));
+              userList()
+            ]))));
   }
 }

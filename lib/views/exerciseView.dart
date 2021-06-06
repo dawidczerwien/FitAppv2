@@ -26,6 +26,8 @@ class _AddExercisePageState extends State<AddExercisePage> {
         .child('users_tranings')
         .child(firebaseUser.uid)
         .child(widget.trainingKey);
+    print("_ref");
+    print(_ref);
   }
 
   Widget _buildContactItem({Map notes, var key}) {
