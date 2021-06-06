@@ -14,6 +14,7 @@ class _MessagesPageState extends State<MessagesPage> {
   final referenceDatabase = FirebaseDatabase.instance;
   final myController = TextEditingController();
   DataSnapshot searchResultSnapshot;
+  String generateChatID;
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -36,59 +37,53 @@ class _MessagesPageState extends State<MessagesPage> {
             ],
           ),
           Spacer(),
-          GestureDetector(
-            onTap: () {
-              //sendMessage(userName);
-            },
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(24)),
-                child: GestureDetector(
-                  onTap: () {
-                    final firebaseUser =
-                        Provider.of<User>(context, listen: false);
-                    print(firebaseUser.uid + '_' + userId);
-                    final ref = referenceDatabase.reference();
+          Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                  color: Colors.red, borderRadius: BorderRadius.circular(24)),
+              child: GestureDetector(
+                onTap: () {
+                  final firebaseUser =
+                      Provider.of<User>(context, listen: false);
+                  print(firebaseUser.uid + '_' + userId);
 
-                    var db2 = FirebaseDatabase.instance
-                        .reference()
-                        .child('messages')
-                        .child(firebaseUser.uid + '_' + userId);
-                    db2.once().then((DataSnapshot snapshot) {
-                      print(snapshot.key);
-                      if (snapshot.value == null) {
-                        var db3 = FirebaseDatabase.instance
-                            .reference()
-                            .child('messages')
-                            .child(userId + '_' + firebaseUser.uid);
-                        db3.once().then((DataSnapshot snapshot) {
-                          print(snapshot.key);
-                          if (snapshot.value == null) {
-                            ref
-                                .child('messages')
-                                .child(firebaseUser.uid + '_' + userId)
-                                .push()
-                                .set({'messages': 0});
-                          } else {
-                            print("exists");
-                          }
-                        });
-                      } else {
-                        print("exists");
-                      }
-                    });
+                  final ref = referenceDatabase.reference();
 
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ChatPage()));
-                  },
-                  child: Text(
-                    "Message",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                )),
-          )
+                  var db2 = FirebaseDatabase.instance
+                      .reference()
+                      .child('messages')
+                      .child(firebaseUser.uid + '_' + userId);
+                  db2.once().then((DataSnapshot snapshot) {
+                    print(snapshot.key);
+                    if (snapshot.value == null) {
+                      var db3 = FirebaseDatabase.instance
+                          .reference()
+                          .child('messages')
+                          .child(userId + '_' + firebaseUser.uid);
+                      db3.once().then((DataSnapshot snapshot) {
+                        print(snapshot.key);
+                        if (snapshot.value == null) {
+                          generateChatID = firebaseUser.uid + '_' + userId;
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ChatPage(generateChatID)));
+                        } else {
+                          generateChatID = userId + '_' + firebaseUser.uid;
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ChatPage(generateChatID)));
+                        }
+                      });
+                    } else {
+                      generateChatID = firebaseUser.uid + '_' + userId;
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChatPage(generateChatID)));
+                    }
+                  });
+                },
+                child: Text(
+                  "Message",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              )),
         ],
       ),
     );
